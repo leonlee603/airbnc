@@ -59,7 +59,7 @@ export default function DarkMode() {
       <Button
         variant="outline"
         size="icon"
-        onClick={() => setTheme("dark")}
+        disabled
       >
         <MoonIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-0" />
       </Button>

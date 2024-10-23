@@ -15,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={``} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
+      <body className={``}>
         <Providers>
           <Navbar />
           <main className="container py-10">{children}</main>

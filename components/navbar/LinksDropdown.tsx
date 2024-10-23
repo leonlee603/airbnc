@@ -1,5 +1,38 @@
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
+// import { LuAlignLeft } from 'react-icons/lu';
+import { HiOutlineMenu } from "react-icons/hi";
+import Link from 'next/link';
+import { Button } from '../ui/button';
+import UserIcon from './UserIcon';
+import { links } from '@/utils/links';
+import SignOutLink from './SignOutLink';
+
 export default function LinksDropdown() {
   return (
-    <div>LinksDropdown</div>
-  )
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant='outline' className='flex gap-4 max-w-[100px]'>
+          <HiOutlineMenu className='w-6 h-6' />
+          <UserIcon />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className='w-52' align='start' sideOffset={10}>
+        {links.map((link) => {
+          return (
+            <DropdownMenuItem key={link.href} asChild>
+              <Link href={link.href} className='capitalize w-full'>
+                {link.label}
+              </Link>
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
