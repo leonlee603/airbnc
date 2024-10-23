@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
 import Navbar from "@/components/navbar/Navbar";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Airbnc",
@@ -15,9 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={``}>
-        <Navbar />
-        <main className="container py-10">{children}</main>
+      <body className={``} suppressHydrationWarning>
+        <Providers>
+          <Navbar />
+          <main className="container py-10">{children}</main>
+        </Providers>
       </body>
     </html>
   );
