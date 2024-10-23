@@ -1,6 +1,7 @@
 "use client";
 
 import { ThemeProvider } from "./theme-provider";
+import { Toaster } from "@/components/ui/toaster"
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       >
         {children}
       </ThemeProvider>
+      <Toaster />
     </>
   );
 }
