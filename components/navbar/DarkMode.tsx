@@ -6,6 +6,7 @@ import { MoonIcon, SunIcon } from "@radix-ui/react-icons";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
+// Dropdown version
 // import {
 //   DropdownMenu,
 //   DropdownMenuContent,
@@ -40,6 +41,7 @@ import { Button } from "@/components/ui/button";
 //   );
 // }
 
+// Toggle version
 export default function DarkMode() {
   // Because we cannot know the theme on the server, many of the values returned from useTheme will be undefined until mounted on the client. 
   // This means if you try to render UI based on the current theme before mounting on the client, you will see a hydration mismatch error.
