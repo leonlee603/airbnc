@@ -1,4 +1,4 @@
-import FormInput from "@/components/form/Forminput";
+import FormInput from "@/components/form/FormInput";
 import { SubmitButton } from "@/components/form/SubmitButton";
 import FormContainer from "@/components/form/FormContainer";
 
