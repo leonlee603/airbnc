@@ -23,7 +23,6 @@ export default function FormInput(props: FormInputType) {
         type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
-        required
       />
     </div>
   );
