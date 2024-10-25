@@ -20,7 +20,7 @@ export async function createProfileAction(prevState: any, formData: FormData) {
     await db.profile.create({
       data: {
         clerkId: user.id,
-        email: user.emailAddresses[0].emailAddress,
+        email: user.emailAddresses[0].emailAddress ?? "",
         profileImage: user.imageUrl ?? "",
         ...validatedFields,
       },
