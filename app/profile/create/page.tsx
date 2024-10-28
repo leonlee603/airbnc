@@ -11,6 +11,7 @@ export default async function CreateProfilePage() {
   if (user?.privateMetadata?.hasProfile) {
     redirect('/');
   }
+  
   return (
     <section>
       <h1 className="text-2xl font-semibold mb-8 capitalize">new user</h1>

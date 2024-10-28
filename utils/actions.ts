@@ -1,11 +1,29 @@
 "use server";
 
-import { profileSchema } from "./schemas";
+import { profileSchema, validateWithZodSchema } from "@/utils/schemas";
 import db from "./db";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { ReactElement } from "react";
+import { raw } from "@prisma/client/runtime/library";
 
+async function getAuthUser() {
+  const user = await currentUser();
+  if (!user) {
+    throw new Error("You must be logged in to access this route");
+  }
+  if (!user.privateMetadata.hasProfile) redirect("/profile/create");
+  return user;
+}
+
+function renderError(error: unknown): { message: string } {
+  return {
+    message: error instanceof Error ? error.message : "An error occurred",
+  };
+}
+
+// create a profile for user from database to match with the user from clerk
 export async function createProfileAction(prevState: any, formData: FormData) {
   try {
     // get user info from clerk
@@ -14,7 +32,7 @@ export async function createProfileAction(prevState: any, formData: FormData) {
 
     // apply validation
     const rawData = Object.fromEntries(formData);
-    const validatedFields = profileSchema.parse(rawData);
+    const validatedFields = validateWithZodSchema(profileSchema, rawData);
 
     // create user profile to database
     await db.profile.create({
@@ -36,11 +54,9 @@ export async function createProfileAction(prevState: any, formData: FormData) {
 
     // return { message: "Profile Created" };
   } catch (error) {
-    return {
-      message: error instanceof Error ? error.message : "An error occurred",
-    };
+    return renderError(error);
   }
-  redirect('/');
+  redirect("/");
 }
 
 export async function fetchProfileImage() {
@@ -56,5 +72,43 @@ export async function fetchProfileImage() {
     },
   });
 
-  return profile?.profileImage;
+  return profile?.profileImage || (user.imageUrl ?? ""); // show default user image from clerk even before the profile is create in our database.
+}
+
+export async function fetchProfile() {
+  const user = await getAuthUser();
+
+  const profile = await db.profile.findUnique({
+    where: {
+      clerkId: user.id,
+    },
+  });
+  if (!profile) redirect("profile/create");
+
+  return profile;
+}
+
+export async function updateProfileAction(
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> {
+  const user = await getAuthUser();
+
+  try {
+    // apply validation
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = validateWithZodSchema(profileSchema, rawData);
+
+    await db.profile.update({
+      where: {
+        clerkId: user.id,
+      },
+      data: validatedFields,
+    });
+
+    revalidatePath("/profile");
+    return { message: "Profile updated successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
 }
