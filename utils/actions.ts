@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { ReactElement } from "react";
 import { raw } from "@prisma/client/runtime/library";
+import { uploadImage } from "./supabase";
 
 async function getAuthUser() {
   const user = await currentUser();
@@ -122,6 +123,18 @@ export async function updateProfileImageAction (
   try {
     const image = formData.get('image') as File;
     const validatedFields = validateWithZodSchema(imageSchema, { image });
+    const fullPath = await uploadImage(validatedFields.image);
+
+    await db.profile.update({
+      where: {
+        clerkId: user.id,
+      },
+      data: {
+        profileImage: fullPath,
+      },
+    });
+    
+    revalidatePath('/profile');
 
     return { message: 'Profile image updated successfully' };
   } catch (error) {
