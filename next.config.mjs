@@ -5,8 +5,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'img.clerk.com',
-        port: '',
-        // pathname: '/account123/**',
       },
     ],
   },
