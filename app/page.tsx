@@ -9,7 +9,7 @@ export default function HomePage({
 }: {
   searchParams: { category?: string; search?: string };
 }) {
-  // console.log(searchParams);
+  console.log(searchParams);
 
   return (
     <section>
@@ -17,7 +17,7 @@ export default function HomePage({
         category={searchParams?.category}
         search={searchParams?.search}
       />
-      <Suspense fallback={<LoadingCards />}>
+      <Suspense key={JSON.stringify(searchParams)} fallback={<LoadingCards />}>
         <PropertiesContainer
           category={searchParams?.category}
           search={searchParams?.search}
