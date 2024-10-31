@@ -1,10 +1,10 @@
 'use client';
 import { useState } from 'react';
 import Image from 'next/image';
-import { Button } from '../ui/button';
-import FormContainer from './FormContainer';
-import ImageInput from './ImageInput';
-import { SubmitButton } from './SubmitButton';
+import { Button } from '@/components/ui/button';
+import FormContainer from '@/components/form/FormContainer';
+import ImageInput from '@/components/form/ImageInput';
+import { SubmitButton } from '@/components/form/Buttons';
 import { type actionFunction } from '@/utils/types';
 import { LuUser2 } from 'react-icons/lu';
 

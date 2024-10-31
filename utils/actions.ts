@@ -1,6 +1,11 @@
 "use server";
 
-import { imageSchema, profileSchema, propertySchema, validateWithZodSchema } from "@/utils/schemas";
+import {
+  imageSchema,
+  profileSchema,
+  propertySchema,
+  validateWithZodSchema,
+} from "@/utils/schemas";
 import db from "./db";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
@@ -114,14 +119,14 @@ export async function updateProfileAction(
   }
 }
 
-export async function updateProfileImageAction (
+export async function updateProfileImageAction(
   prevState: any,
   formData: FormData
 ): Promise<{ message: string }> {
   const user = await getAuthUser();
-  
+
   try {
-    const image = formData.get('image') as File;
+    const image = formData.get("image") as File;
     const validatedFields = validateWithZodSchema(imageSchema, { image });
     const fullPath = await uploadImage(validatedFields.image);
 
@@ -133,10 +138,10 @@ export async function updateProfileImageAction (
         profileImage: fullPath,
       },
     });
-    
-    revalidatePath('/profile');
 
-    return { message: 'Profile image updated successfully' };
+    revalidatePath("/profile");
+
+    return { message: "Profile image updated successfully" };
   } catch (error) {
     return renderError(error);
   }
@@ -153,7 +158,9 @@ export const createPropertyAction = async (
 
     // apply validation
     const validatedFields = validateWithZodSchema(propertySchema, rawData);
-    const validatedFile = validateWithZodSchema(imageSchema, { image: rawData.image });
+    const validatedFile = validateWithZodSchema(imageSchema, {
+      image: rawData.image,
+    });
 
     // upload the image
     const fullPath = await uploadImage(validatedFile.image);
@@ -166,16 +173,15 @@ export const createPropertyAction = async (
         profileId: user.id,
       },
     });
-
   } catch (error) {
     return renderError(error);
   }
-  
-  redirect('/');
+
+  redirect("/");
 };
 
-export async function fetchProperties ({
-  search = '',
+export async function fetchProperties({
+  search = "",
   category,
 }: {
   search?: string;
@@ -185,8 +191,8 @@ export async function fetchProperties ({
     where: {
       category,
       OR: [
-        { name: { contains: search, mode: 'insensitive' } },
-        { tagline: { contains: search, mode: 'insensitive' } },
+        { name: { contains: search, mode: "insensitive" } },
+        { tagline: { contains: search, mode: "insensitive" } },
       ],
     },
     select: {
@@ -203,4 +209,74 @@ export async function fetchProperties ({
   });
 
   return properties;
-};
+}
+
+export async function fetchFavoriteId({ propertyId }: { propertyId: string }) {
+  const user = await getAuthUser();
+
+  const favorite = await db.favorite.findFirst({
+    where: {
+      propertyId,
+      profileId: user.id,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return favorite?.id || null;
+}
+
+export async function toggleFavoriteAction(prevState: {
+  propertyId: string;
+  favoriteId: string | null;
+  pathname: string;
+}) {
+  const user = await getAuthUser();
+  const { propertyId, favoriteId, pathname } = prevState;
+
+  try {
+    if (favoriteId) {
+      await db.favorite.delete({
+        where: {
+          id: favoriteId,
+        },
+      });
+    } else {
+      await db.favorite.create({
+        data: {
+          propertyId,
+          profileId: user.id,
+        },
+      });
+    }
+
+    revalidatePath(pathname);
+    
+    return { message: favoriteId ? "Removed from Faves" : "Added to Faves" };
+  } catch (error) {
+    return renderError(error);
+  }
+}
+
+export async function fetchFavorites() {
+  const user = await getAuthUser();
+  const favorites = await db.favorite.findMany({
+    where: {
+      profileId: user.id,
+    },
+    select: {
+      property: {
+        select: {
+          id: true,
+          name: true,
+          tagline: true,
+          price: true,
+          country: true,
+          image: true,
+        },
+      },
+    },
+  });
+  return favorites.map((favorite) => favorite.property);
+}

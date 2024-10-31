@@ -5,7 +5,7 @@ import {
   updateProfileImageAction,
 } from "@/utils/actions";
 import FormInput from "@/components/form/FormInput";
-import { SubmitButton } from "@/components/form/SubmitButton";
+import { SubmitButton } from "@/components/form/Buttons";
 import ImageInputContainer from "@/components/form/ImageInputContainer";
 
 export default async function ProfilePage() {
