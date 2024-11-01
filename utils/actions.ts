@@ -29,6 +29,10 @@ function renderError(error: unknown): { message: string } {
   };
 }
 
+/*
+ ** Profile related
+ */
+
 // create a profile for user from database to match with the user from clerk
 export async function createProfileAction(prevState: any, formData: FormData) {
   try {
@@ -147,6 +151,10 @@ export async function updateProfileImageAction(
   }
 }
 
+/*
+ ** Property related
+ */
+
 export const createPropertyAction = async (
   prevState: any,
   formData: FormData
@@ -211,6 +219,21 @@ export async function fetchProperties({
   return properties;
 }
 
+export async function fetchPropertyDetails(id: string) {
+  return db.property.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      profile: true,
+    },
+  });
+}
+
+/*
+ ** Favorite related
+ */
+
 export async function fetchFavoriteId({ propertyId }: { propertyId: string }) {
   const user = await getAuthUser();
 
@@ -252,7 +275,7 @@ export async function toggleFavoriteAction(prevState: {
     }
 
     revalidatePath(pathname);
-    
+
     return { message: favoriteId ? "Removed from Faves" : "Added to Faves" };
   } catch (error) {
     return renderError(error);
@@ -261,6 +284,7 @@ export async function toggleFavoriteAction(prevState: {
 
 export async function fetchFavorites() {
   const user = await getAuthUser();
+
   const favorites = await db.favorite.findMany({
     where: {
       profileId: user.id,
@@ -278,5 +302,6 @@ export async function fetchFavorites() {
       },
     },
   });
+
   return favorites.map((favorite) => favorite.property);
 }
