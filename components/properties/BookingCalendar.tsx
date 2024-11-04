@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Calendar } from '@/components/ui/calendar';
-import { DateRange } from 'react-day-picker';
+import { useState } from "react";
+import { Calendar } from "@/components/ui/calendar";
+import { DateRange } from "react-day-picker";
 
 export default function App() {
   const currentDate = new Date();
@@ -13,12 +13,14 @@ export default function App() {
   const [range, setRange] = useState<DateRange | undefined>(defaultSelected);
 
   return (
-    <Calendar
-      id='test'
-      mode='range'
-      defaultMonth={currentDate}
-      selected={range}
-      onSelect={setRange}
-    />
+    <div className="border rounded-md flex justify-center w-full py-2.5">
+      <Calendar
+        id="test"
+        mode="range"
+        defaultMonth={currentDate}
+        selected={range}
+        onSelect={setRange}
+      />
+    </div>
   );
 }
