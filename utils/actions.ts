@@ -282,7 +282,7 @@ export async function toggleFavoriteAction(prevState: {
   }
 }
 
-export async function fetchFavorites() {
+export async function fetchFavorites(search = "") {
   const user = await getAuthUser();
 
   const favorites = await db.favorite.findMany({
@@ -303,5 +303,37 @@ export async function fetchFavorites() {
     },
   });
 
-  return favorites.map((favorite) => favorite.property);
+  let filteredValue: {
+    id: string;
+    name: string;
+    image: string;
+    tagline: string;
+    country: string;
+    price: number;
+  }[];
+
+  if (search === "") {
+    filteredValue = favorites.map((favorite) => favorite.property);
+  } else {
+    let unFormattedValues: {
+      property: {
+        id: string;
+        name: string;
+        image: string;
+        tagline: string;
+        country: string;
+        price: number;
+      };
+    }[];
+    unFormattedValues = favorites.filter(
+      (favorite) =>
+        favorite.property.name.includes(search) ||
+        favorite.property.tagline.includes(search)
+    );
+    filteredValue = unFormattedValues.map(
+      (unFormattedValue) => unFormattedValue.property
+    );
+  }
+
+  return filteredValue;
 }
