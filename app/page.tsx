@@ -9,8 +9,6 @@ export default function HomePage({
 }: {
   searchParams: { category?: string; search?: string };
 }) {
-  console.log(searchParams);
-
   return (
     <section>
       <CategoriesList
