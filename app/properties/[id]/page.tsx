@@ -24,6 +24,14 @@ const DynamicMap = dynamic(
   }
 );
 
+const DynamicBookingWrapper = dynamic(
+  () => import("@/components/booking/BookingWrapper"),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[200px] w-full" />,
+  }
+);
+
 export default async function PropertyDetailsPage({
   params,
 }: {
@@ -69,7 +77,11 @@ export default async function PropertyDetailsPage({
           <DynamicMap countryCode={property.country} />
         </div>
         <div className="lg:col-span-4 flex flex-col items-center">
-          
+          <DynamicBookingWrapper
+            propertyId={property.id}
+            price={property.price}
+            bookings={property.bookings}
+          />
         </div>
       </section>
       {reviewDoesNotExist && <SubmitReview propertyId={property.id} />}
