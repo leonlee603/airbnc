@@ -13,7 +13,7 @@ import {
   generateBlockedPeriods,
 } from "@/utils/calendar";
 
-function BookingCalendar() {
+export default function BookingCalendar() {
   const currentDate = new Date();
 
   const [range, setRange] = useState<DateRange | undefined>(defaultSelected);
@@ -32,4 +32,3 @@ function BookingCalendar() {
     />
   );
 }
-export default BookingCalendar;

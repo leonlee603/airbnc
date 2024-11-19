@@ -11,6 +11,7 @@ type BookingWrapperProps = {
   price: number;
   bookings: Booking[];
 };
+
 export default function BookingWrapper({
   propertyId,
   price,

@@ -4,7 +4,7 @@ import { useProperty } from '@/utils/store';
 import ConfirmBooking from './ConfirmBooking';
 import BookingForm from './BookingForm';
 
-function BookingContainer() {
+export default function BookingContainer() {
   const { range } = useProperty((state) => state);
 
   if (!range || !range.from || !range.to) return null;
@@ -17,5 +17,3 @@ function BookingContainer() {
     </div>
   );
 }
-
-export default BookingContainer;
