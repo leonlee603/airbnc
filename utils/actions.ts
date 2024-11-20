@@ -14,6 +14,7 @@ import { redirect } from "next/navigation";
 import { ReactElement } from "react";
 import { raw } from "@prisma/client/runtime/library";
 import { uploadImage } from "./supabase";
+import { calculateTotals } from "./calculateTotals";
 
 async function getAuthUser() {
   const user = await currentUser();
@@ -478,3 +479,42 @@ export async function fetchPropertyRating(propertyId: string) {
  ** Booking related
  */
 
+export async function createBookingAction(prevState: {
+  propertyId: string;
+  checkIn: Date;
+  checkOut: Date;
+}) {
+  const user = await getAuthUser();
+
+  const { propertyId, checkIn, checkOut } = prevState;
+  const property = await db.property.findUnique({
+    where: { id: propertyId },
+    select: { price: true },
+  });
+
+  if (!property) {
+    return { message: "Property not found" };
+  }
+  
+  const { orderTotal, totalNights } = calculateTotals({
+    checkIn,
+    checkOut,
+    price: property.price,
+  });
+
+  try {
+    const booking = await db.booking.create({
+      data: {
+        checkIn,
+        checkOut,
+        orderTotal,
+        totalNights,
+        profileId: user.id,
+        propertyId,
+      },
+    });
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/bookings");
+}
