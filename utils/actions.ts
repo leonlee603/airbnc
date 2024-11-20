@@ -487,6 +487,7 @@ export async function createBookingAction(prevState: {
   const user = await getAuthUser();
 
   const { propertyId, checkIn, checkOut } = prevState;
+  
   const property = await db.property.findUnique({
     where: { id: propertyId },
     select: { price: true },
